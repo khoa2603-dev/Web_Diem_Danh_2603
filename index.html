@@ -161,10 +161,6 @@
         .dot-present { background: #00b894; }
         .dot-absent { background: #e63946; }
 
-        .undo-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #2d3436; color: #fff; padding: 14px 24px; border-radius: 30px; display: flex; align-items: center; gap: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 9999; font-weight: 700; font-size: 14px; opacity: 0; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease; }
-        .undo-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .undo-btn-trigger { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); border: none; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-
         .table-container { max-height: 70vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background: #fff; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 900px; }
         thead { position: sticky; top: 0; z-index: 10; }
@@ -191,15 +187,16 @@
         body.mode-mobile .main-container { flex-direction: column; gap: 15px; max-width: 600px; }
         body.mode-mobile .left-panel { width: 100%; padding: 15px; }
         
-        /* 🌟 KHÔI PHỤC: Logic Ẩn/Hiện bảng điểm và định dạng thu gọn trên Mobile */
-        body.mode-mobile .right-panel { display: none; width: 100%; }
-        body.mode-mobile .right-panel.mobile-visible { display: block; }
+        /* 🌟 ĐÃ SỬA: Bảng hiển thị ở chế độ mobile LUÔN HIỆN, không ẩn bảng điểm danh nữa */
+        body.mode-mobile .right-panel { display: block; width: 100%; }
         body.mode-mobile select, body.mode-mobile input { height: 50px; font-size: 16px; }
         body.mode-mobile .mobile-btn-group { display: grid; }
         body.mode-mobile .btn-submit-origin { display: none; }
+        
+        /* Đưa độ rộng bảng co giãn tự động theo chế độ rút gọn */
         body.mode-mobile table { min-width: 100%; }
 
-        /* Bộ chọn gợi ý 2 giai đoạn trên Mobile */
+        /* Khung gõ tìm kiếm 2 giai đoạn trên Mobile */
         body.mode-mobile .suggestions { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
             max-height: 100vh; background: #f8fafc; z-index: 99999; 
@@ -337,7 +334,8 @@
 
             <div class="mobile-btn-group">
                 <button class="btn-submit" style="margin-top:0;" onclick="clearAllLogs()">🗑️ Xóa</button>
-                <button class="btn-submit btn-view" id="mobileToggleViewBtn" style="margin-top:0;" onclick="toggleMobileFullView()">👀 Hiện 12 Buổi</button>
+                <!-- NÚT BẤM CHUYỂN ĐỔI CHẾ ĐỘ RÚT GỌN / FULL 12 BUỔI TRÊN MOBILE -->
+                <button class="btn-submit btn-view" id="mobileToggleViewBtn" style="margin-top:0;" onclick="toggleMobileFullView()">👀 Full 12 Buổi</button>
             </div>
         </div>
     </div>
@@ -356,7 +354,7 @@
 <script>
     let studentsDatabase = [];
     let currentMode = 'laptop'; 
-    let mobileIsFullView = false; 
+    let mobileIsFullView = false; // Mặc định Mobile sẽ hiển thị bảng dạng RÚT GỌN 3 cột
     let currentSuggestions = [];
     
     let lastActionTimeout = null;
@@ -475,7 +473,6 @@
         const isReady = validateSystemLock(); if (isReady) { loadDataFromSheets(); }
     }
 
-    // 🌟 KHÔI PHỤC LOGIC: Khi đổi lớp, tuần, buổi ở Mobile -> Cần vẽ lại phần Tiêu đề bảng thu gọn để hiển thị đúng cột
     function onUIConfigChange() { 
         const isReady = validateSystemLock(); 
         if (isReady) {
@@ -490,9 +487,11 @@
         setTimeout(() => {
             currentMode = mode;
             if (mode === 'mobile') {
-                document.body.classList.add('mode-mobile'); document.getElementById('btnMobile').classList.add('active'); document.getElementById('btnLaptop').classList.remove('active'); mobileIsFullView = false; rightPanel.classList.remove('mobile-visible'); if(mobileToggleViewBtn) mobileToggleViewBtn.innerText = "👀 Hiện 12 Buổi";
+                document.body.classList.add('mode-mobile'); document.getElementById('btnMobile').classList.add('active'); document.getElementById('btnLaptop').classList.remove('active'); 
+                mobileIsFullView = false; // Trả về dạng rút gọn khi mới chuyển sang mobile
+                if(mobileToggleViewBtn) mobileToggleViewBtn.innerText = "👀 Full 12 Buổi";
             } else {
-                document.body.classList.remove('mode-mobile'); document.getElementById('btnLaptop').classList.add('active'); document.getElementById('btnMobile').classList.remove('active'); rightPanel.classList.remove('mobile-visible');
+                document.body.classList.remove('mode-mobile'); document.getElementById('btnLaptop').classList.add('active'); document.getElementById('btnMobile').classList.remove('active');
             }
             renderTableHeader(); renderMatrixTable();  
             setTimeout(() => { panels.forEach(p => p.classList.remove('switching')); }, 50);
@@ -501,7 +500,7 @@
 
     function autoDetectDevice() {
         if (window.innerWidth <= 768 || /Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-            currentMode = 'mobile'; document.body.classList.add('mode-mobile'); document.getElementById('btnMobile').classList.add('active'); document.getElementById('btnLaptop').classList.remove('active'); rightPanel.classList.remove('mobile-visible');
+            currentMode = 'mobile'; document.body.classList.add('mode-mobile'); document.getElementById('btnMobile').classList.add('active'); document.getElementById('btnLaptop').classList.remove('active');
         } else {
             currentMode = 'laptop'; document.body.classList.remove('mode-mobile'); document.getElementById('btnLaptop').classList.add('active'); document.getElementById('btnMobile').classList.remove('active');
         }
@@ -524,15 +523,22 @@
         mobileSearchClone.value = ''; executeStudentSearch(''); mobileSearchClone.focus();
     }
 
+    // 🌟 KHÔI PHỤC HOÀN TOÀN: Nút chuyển đổi trạng thái giữa RÚT GỌN (Mặc định) và FULL 12 BUỔI trên Mobile
     function toggleMobileFullView() {
         mobileIsFullView = !mobileIsFullView;
-        if (mobileIsFullView) { rightPanel.classList.add('mobile-visible'); mobileToggleViewBtn.innerText = "📉 Ẩn Bảng Điểm"; } 
-        else { rightPanel.classList.remove('mobile-visible'); mobileToggleViewBtn.innerText = "👀 Hiện 12 Buổi"; }
-        renderTableHeader(); renderMatrixTable();
+        if (mobileIsFullView) {
+            mobileToggleViewBtn.innerText = "📉 Thu gọn bảng";
+            document.querySelector('#mainTable').style.minWidth = "900px"; // Kéo giãn chiều ngang khi xem full
+        } else {
+            mobileToggleViewBtn.innerText = "👀 Full 12 Buổi";
+            document.querySelector('#mainTable').style.minWidth = "100%"; // Co về vừa màn hình khi rút gọn
+        }
+        renderTableHeader(); 
+        renderMatrixTable();
     }
 
-    // 🌟 KHÔI PHỤC: Cấu trúc vẽ Header bảng động theo cấu hình dạng laptop full hoặc dạng Mobile thu gọn 3 cột
     function renderTableHeader() {
+        // Nếu là Laptop hoặc ở Mobile bấm bật Full 12 buổi -> Vẽ cấu hình full 2 hàng tiêu đề tuần buổi
         if (currentMode === 'laptop' || (currentMode === 'mobile' && mobileIsFullView)) {
             tableHeader.innerHTML = `
                 <tr>
@@ -543,6 +549,7 @@
                 </tr>
             `;
         } else {
+            // 🌟 CHẾ ĐỘ RÚT GỌN TRÊN MOBILE: Chỉ vẽ 1 cột động dựa theo buổi đang tích điểm danh
             const wText = weekSelect.value.toUpperCase();
             const lText = lessonSelect.value.toUpperCase();
             tableHeader.innerHTML = `
@@ -573,7 +580,6 @@
     function removeAccents(str) { return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
     function getInitials(str) { return removeAccents(str).split(' ').map(word => word[0]).join(''); }
 
-    // 🌟 KHÔI PHỤC: Logic kết xuất bảng tính dạng thu gọn cột theo đúng ca trực cố định trên Mobile
     function renderMatrixTable() {
         if (subjectSelect.value === "none" || classSelect.value === "none" || weekSelect.value === "none" || lessonSelect.value === "none" || studentsDatabase.length === 0) return;
         matrixBody.innerHTML = '';
@@ -584,11 +590,13 @@
         studentsDatabase.forEach(student => {
             const tr = document.createElement('tr'); const badge = (val) => val ? `<span class="cell-check cell-${val}">${val}</span>` : "";
             
+            // Nếu chạy trên Laptop hoặc chạy trên Mobile cấu hình MỞ FULL 12 BUỔI -> Kết xuất toàn bộ ma trận
             if (currentMode === 'laptop' || (currentMode === 'mobile' && mobileIsFullView)) {
                 tr.innerHTML = `
-                    <td>${student.id}</td><td class="name-col">${student.name}</td><td>${badge(student.t1_b1)}</td><td>${badge(student.t1_b2)}</td><td>${badge(student.t1_b3)}</td><td>${badge(student.t2_b1)}</td><td>${badge(student.t2_b2)}</td><td>${badge(student.t2_b3)}</td><td>${badge(student.t3_b1)}</td><td>${badge(student.t3_b2)}</td><td>${badge(student.t3_b3)}</td><td>${badge(student.t4_b1)}</td><td>${badge(student.t4_b2)}</td><td>${badge(student.t4_b3)}</td>
+                    <td>${student.id}</td><td class="name-col">${student.name}</td><td>${badge(student.t1_b1)}</td><td><td>${badge(student.t1_b2)}</td><td>${badge(student.t1_b3)}</td><td>${badge(student.t2_b1)}</td><td>${badge(student.t2_b2)}</td><td>${badge(student.t2_b3)}</td><td>${badge(student.t3_b1)}</td><td>${badge(student.t3_b2)}</td><td>${badge(student.t3_b3)}</td><td>${badge(student.t4_b1)}</td><td>${badge(student.t4_b2)}</td><td>${badge(student.t4_b3)}</td>
                 `;
             } else {
+                // 🌟 CHẾ ĐỘ RÚT GỌN TRÊN MOBILE: Chỉ kết xuất duy nhất dữ liệu của ô cột hiện tại được chọn
                 tr.innerHTML = `
                     <td>${student.id}</td>
                     <td class="name-col">${student.name}</td>
