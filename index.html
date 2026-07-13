@@ -97,48 +97,88 @@
         
         .select-highlight { background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%) !important; border: none; font-weight: 800; }
         
+        /* Box thêm học sinh */
+        .add-student-box {
+            background: rgba(108, 92, 231, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px dashed #6c5ce7;
+            margin-bottom: 16px;
+        }
+        .date-picker-row {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+        }
+        .date-picker-row label {
+            margin: 0; font-size: 14px; color: #4a5568; white-space: nowrap; min-width: 70px;
+        }
+        .btn-add-student {
+            background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
+            padding: 10px !important;
+            font-size: 14px !important;
+            margin-top: 8px !important;
+            box-shadow: 0 4px 15px rgba(0, 176, 155, 0.3) !important;
+        }
+
+        /* 📱 TIÊU CHÍ 4: NÂNG CẤP SUGGESTIONS PHỦ TRÀN TRÊN MOBILE */
         .suggestions {
             position: absolute; top: 100%; left: 0; right: 0; background: #fff; border-radius: 12px; margin-top: 5px;
             max-height: 220px; overflow-y: auto; z-index: 100; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #eee;
         }
-        .suggestion-item { padding: 12px 18px; cursor: pointer; border-bottom: 1px solid #f1f3f4; display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; }
+        .suggestion-header-mobile { display: none; }
+        .suggestion-item { padding: 14px 18px; cursor: pointer; border-bottom: 1px solid #f1f3f4; display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 600; }
         .suggestion-item:hover, .suggestion-item.active { background-color: #f0f8ff; color: #0984e3; }
         
-        .attendance-list { margin-top: 15px; max-height: 200px; overflow-y: auto; }
+        .attendance-list { margin-top: 15px; max-height: 320px; overflow-y: auto; padding-right: 4px; }
         
         .student-item {
-            display: flex; flex-direction: column; gap: 3px; background: #fff; padding: 10px 15px; border-radius: 10px;
-            margin-bottom: 8px; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #00b894; font-weight: 600;
-        }
-        
-        .warning-badge {
-            background-color: #fff9db;
-            color: #f59f00;
-            border: 1px solid #ffe066;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            margin-top: 4px;
-            font-weight: 700;
-            display: inline-block;
+            display: flex; flex-direction: column; gap: 5px; background: #fff; padding: 12px 15px; border-radius: 12px;
+            margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border-left: 5px solid #00b894; font-weight: 600;
+            position: relative; transition: all 0.3s ease;
         }
 
-        .table-container { 
-            max-height: 70vh; 
-            overflow-y: auto;  
-            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background: #fff; overflow-x: auto; -webkit-overflow-scrolling: touch; 
+        /* KHUNG THÔNG BÁO NGHỈ HỌC ĐẶC SẮC */
+        .warning-card-advanced {
+            background: linear-gradient(135deg, #fffaf0 0%, #fff4e6 100%);
+            border: 1px solid #ffe8cc; border-radius: 8px; padding: 8px 12px; margin-top: 6px;
+            display: flex; align-items: flex-start; gap: 8px;
+            animation: cardShake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
-        
+        .warning-card-advanced .warning-icon { font-size: 18px; animation: pulseIcon 1.5s infinite alternate; }
+        .warning-card-advanced .warning-text-box { display: flex; flex-direction: column; gap: 2px; }
+        .warning-card-advanced .warning-title { color: #d9480f; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .warning-card-advanced .warning-desc { color: #495057; font-size: 12px; line-height: 1.4; }
+        .warning-card-advanced .warning-history-btn {
+            background: rgba(217, 72, 15, 0.1); color: #d9480f; border: none; border-radius: 4px;
+            font-size: 10px; padding: 4px 8px; margin-top: 4px; cursor: pointer; width: fit-content; font-weight: 700;
+        }
+        .warning-card-advanced .warning-history-btn:hover { background: #d9480f; color: #fff; }
+        .quick-history-preview { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+        .history-dot { width: 18px; height: 18px; border-radius: 4px; font-size: 9px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; }
+        .dot-present { background: #00b894; }
+        .dot-absent { background: #e63946; }
+
+        /* 🚨 TIÊU CHÍ 3: HỆ THỐNG TOAST THÔNG BÁO VÀ NÚT HOÀN TÁC (UNDO) */
+        .undo-toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #2d3436; color: #fff; padding: 14px 24px; border-radius: 30px;
+            display: flex; align-items: center; gap: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 9999; font-weight: 700; font-size: 14px; opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        }
+        .undo-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .undo-btn-trigger {
+            background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            border: none; color: white; padding: 6px 14px; border-radius: 20px;
+            font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+        .undo-btn-trigger:hover { transform: scale(1.05); }
+
+        .table-container { max-height: 70vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background: #fff; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 900px; }
-        
-        thead {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        
+        thead { position: sticky; top: 0; z-index: 10; }
         th, td { border: 1px solid #edf2f7; padding: 12px 6px; text-align: center; }
-
         th { background-color: #f8fafc; color: #4a5568; font-weight: 800; text-transform: uppercase; font-size: 13px; }
         th.week-header { background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); color: #fff; font-size: 14px; border: none; }
         tbody tr:nth-child(even) { background-color: #f8fafc; }
@@ -159,18 +199,49 @@
         .btn-view { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); }
         .mobile-btn-group { display: none; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
 
-        /* Mobile CSS */
+        @keyframes cardShake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+            40%, 60% { transform: translate3d(3px, 0, 0); }
+        }
+        @keyframes pulseIcon { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.2); opacity: 1; } }
+
+        /* 📱 TIÊU CHÍ 4: CSS MOBILE TỐI GIẢN TẬP TRUNG TÌM KIẾM */
         body.mode-mobile { padding: 10px; }
         body.mode-mobile .top-navbar { margin-bottom: 12px; padding: 10px 15px; border-radius: 12px; justify-content: center; }
         body.mode-mobile .live-clock { width: 100%; text-align: center; order: 3; margin-top: 5px; }
-        
         body.mode-mobile .main-container { flex-direction: column; gap: 15px; max-width: 600px; }
-        body.mode-mobile .left-panel, body.mode-mobile .right-panel { width: 100%; padding: 20px; }
+        body.mode-mobile .left-panel { width: 100%; padding: 15px; }
         
+        /* Ẩn bảng ma trận cồng kềnh trên Mobile mặc định để tránh lag/che khuất */
+        body.mode-mobile .right-panel { display: none; width: 100%; }
+        body.mode-mobile .right-panel.mobile-visible { display: block; } /* Chỉ hiện khi bật xem full */
+
         body.mode-mobile select, body.mode-mobile input { height: 50px; font-size: 16px; }
-        body.mode-mobile table { min-width: 100%; }
         body.mode-mobile .mobile-btn-group { display: grid; }
         body.mode-mobile .btn-submit-origin { display: none; }
+
+        /* Đẩy danh sách gợi ý Suggestions bao phủ toàn màn hình phía trên bàn phím ảo Mobile */
+        body.mode-mobile .suggestions {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            max-height: 100vh; background: rgba(255, 255, 255, 0.98);
+            z-index: 99999; margin-top: 0; border-radius: 0;
+            padding: 20px; box-sizing: border-box; display: none;
+            overflow-y: auto;
+        }
+        body.mode-mobile .suggestion-header-mobile {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #eee;
+        }
+        body.mode-mobile .suggestion-header-mobile span { font-weight: 800; color: #6c5ce7; font-size: 16px; }
+        body.mode-mobile .suggestion-header-mobile button {
+            background: #ff0844; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 700;
+        }
+        body.mode-mobile .suggestion-item {
+            padding: 16px; margin-bottom: 10px; background: #f8fafc;
+            border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
     </style>
 </head>
 <body>
@@ -188,6 +259,12 @@
             Mobile
         </button>
     </div>
+</div>
+
+<!-- NÚT HOÀN TÁC TOAST POPUP -->
+<div id="undoToast" class="undo-toast">
+    <span id="undoToastText">Đã điểm danh thành công!</span>
+    <button class="undo-btn-trigger" onclick="triggerUndoAction()">↩️ Hoàn Tác</button>
 </div>
 
 <div class="main-container">
@@ -244,7 +321,26 @@
         <div class="form-group">
             <label for="searchInput">🔍 Điểm danh Học sinh (Gõ tên):</label>
             <input type="text" id="searchInput" placeholder="Ví dụ: nhn..." autocomplete="off" inputmode="search">
-            <div id="suggestions" class="suggestions"></div>
+            <!-- Ô CHỨA SUGGESTIONS ĐÃ ĐƯỢC THÊM HEADER TẮT TRÊN MOBILE -->
+            <div id="suggestions" class="suggestions">
+                <div class="suggestion-header-mobile">
+                    <span>💡 Kết quả tìm kiếm</span>
+                    <button onclick="closeMobileSuggestions()">Đóng ✖</button>
+                </div>
+                <div id="suggestionItemsContainer"></div>
+            </div>
+        </div>
+
+        <!-- BOX THÊM HỌC SINH MỚI -->
+        <div class="add-student-box">
+            <label style="color: #6c5ce7; font-size: 15px; margin-bottom: 8px; font-weight: 800;">➕ Thêm Học Sinh Mới</label>
+            <input type="text" id="newStudentName" placeholder="Họ và tên..." style="margin-bottom: 8px; height: 42px;">
+            <input type="tel" id="newStudentPhone" placeholder="Số điện thoại..." style="margin-bottom: 8px; height: 42px;">
+            <div class="date-picker-row">
+                <label for="newStudentDate">📅 Ngày vào:</label>
+                <input type="date" id="newStudentDate" style="height: 42px; margin: 0; padding-left: 10px; cursor: pointer;">
+            </div>
+            <button class="btn-submit btn-add-student" onclick="addNewStudent()" id="btnAddStudent">Thêm vào danh sách</button>
         </div>
 
         <div class="attendance-list" id="attendanceList"></div>
@@ -252,11 +348,11 @@
 
         <div class="mobile-btn-group">
             <button class="btn-submit" style="margin-top:0;" onclick="document.getElementById('attendanceList').innerHTML=''">🗑️ Xóa</button>
-            <button class="btn-submit btn-view" id="mobileToggleViewBtn" style="margin-top:0;" onclick="toggleMobileFullView()">👀 Full 12 Buổi</button>
+            <button class="btn-submit btn-view" id="mobileToggleViewBtn" style="margin-top:0;" onclick="toggleMobileFullView()">👀 Hiện 12 Buổi</button>
         </div>
     </div>
 
-    <div class="panel right-panel">
+    <div class="panel right-panel" id="rightPanel">
         <h3 id="tableTitle">✨ TỜ ĐIỂM DANH TỔNG HỢP ✨</h3>
         <div class="table-container">
             <table id="mainTable">
@@ -273,6 +369,10 @@
     let mobileIsFullView = false; 
     let currentSuggestions = [];
     
+    // BIẾN PHỤC VỤ TÍNH NĂNG HOÀN TÁC (UNDO)
+    let lastActionTimeout = null;
+    let lastActionData = null; 
+
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyaK2mbF-_2K85V7IxV4kc6ofcOFx5sM6Twh-MZm6NXzaOT3u8GTeS2mTgLYOsS97SYgA/exec";
 
     const lessonSequence = [
@@ -284,6 +384,7 @@
 
     const searchInput = document.getElementById('searchInput');
     const suggestionsBox = document.getElementById('suggestions');
+    const suggestionItemsContainer = document.getElementById('suggestionItemsContainer') || suggestionsBox;
     const matrixBody = document.getElementById('matrixBody');
     const attendanceList = document.getElementById('attendanceList');
     const subjectSelect = document.getElementById('subjectSelect');
@@ -291,6 +392,18 @@
     const tableTitle = document.getElementById('tableTitle');
     const tableHeader = document.getElementById('tableHeader');
     const mobileToggleViewBtn = document.getElementById('mobileToggleViewBtn');
+    const rightPanel = document.getElementById('rightPanel');
+
+    function setDefaultEntryDate() {
+        const dateInput = document.getElementById('newStudentDate');
+        if (dateInput) {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+    }
 
     function startLiveClock() {
         setInterval(() => {
@@ -301,13 +414,12 @@
         }, 1000);
     }
     startLiveClock();
+    setDefaultEntryDate();
 
     function switchViewMode(mode) {
         if (currentMode === mode) return;
-        
         const panels = document.querySelectorAll('.panel');
         panels.forEach(p => p.classList.add('switching'));
-
         setTimeout(() => {
             currentMode = mode;
             if (mode === 'mobile') {
@@ -315,29 +427,29 @@
                 document.getElementById('btnMobile').classList.add('active');
                 document.getElementById('btnLaptop').classList.remove('active');
                 mobileIsFullView = false; 
-                if(mobileToggleViewBtn) mobileToggleViewBtn.innerText = "👀 Full 12 Buổi";
+                rightPanel.classList.remove('mobile-visible');
+                if(mobileToggleViewBtn) mobileToggleViewBtn.innerText = "👀 Hiện 12 Buổi";
             } else {
                 document.body.classList.remove('mode-mobile');
                 document.getElementById('btnLaptop').classList.add('active');
                 document.getElementById('btnMobile').classList.remove('active');
+                rightPanel.classList.remove('mobile-visible');
             }
             renderTableHeader(); 
             renderMatrixTable();  
-
             setTimeout(() => {
                 panels.forEach(p => p.classList.remove('switching'));
             }, 50);
-
         }, 200); 
     }
 
-    /* ĐÃ SỬA: Hàm tự động chạy khi tải trang để đảm bảo dữ liệu Sheets được kéo về thành công */
     function autoDetectDevice() {
         if (window.innerWidth <= 768 || /Mobi|Android|iPhone/i.test(navigator.userAgent)) {
             currentMode = 'mobile';
             document.body.classList.add('mode-mobile');
             document.getElementById('btnMobile').classList.add('active');
             document.getElementById('btnLaptop').classList.remove('active');
+            rightPanel.classList.remove('mobile-visible');
         } else {
             currentMode = 'laptop';
             document.body.classList.remove('mode-mobile');
@@ -345,11 +457,11 @@
             document.getElementById('btnMobile').classList.remove('active');
         }
         renderTableHeader(); 
-        loadDataFromSheets(); /* Thêm lại dòng gọi dữ liệu từ Google Sheets ở đây */
+        loadDataFromSheets(); 
     }
 
     function updateDynamicHeader() {
-        if (currentMode === 'mobile' && !mobileIsFullView) {
+        if (currentMode === 'mobile' && mobileIsFullView) {
             renderTableHeader();
             renderMatrixTable();
         }
@@ -357,40 +469,34 @@
 
     function toggleMobileFullView() {
         mobileIsFullView = !mobileIsFullView;
-        mobileToggleViewBtn.innerText = mobileIsFullView ? "📉 Thu gọn" : "👀 Full 12 Buổi";
+        if (mobileIsFullView) {
+            rightPanel.classList.add('mobile-visible');
+            mobileToggleViewBtn.innerText = "📉 Ẩn Bảng Điểm";
+        } else {
+            rightPanel.classList.remove('mobile-visible');
+            mobileToggleViewBtn.innerText = "👀 Hiện 12 Buổi";
+        }
         renderTableHeader();
         renderMatrixTable();
     }
 
     function renderTableHeader() {
-        if (currentMode === 'laptop' || (currentMode === 'mobile' && mobileIsFullView)) {
-            tableHeader.innerHTML = `
-                <tr>
-                    <th rowspan="2" style="width: 60px;">Mã HS</th>
-                    <th rowspan="2" style="width: 180px;">Họ và Tên</th>
-                    <th colspan="3" class="week-header">TUẦN 1</th>
-                    <th colspan="3" class="week-header" style="background: linear-gradient(to right, #f6d365, #fda085);">TUẦN 2</th>
-                    <th colspan="3" class="week-header" style="background: linear-gradient(to right, #43e97b, #38f9d7); color:#000;">TUẦN 3</th>
-                    <th colspan="3" class="week-header" style="background: linear-gradient(to right, #a18cd1, #fbc2eb);">TUẦN 4</th>
-                </tr>
-                <tr>
-                    <th>B1</th><th>B2</th><th>B3</th>
-                    <th>B1</th><th>B2</th><th>B3</th>
-                    <th>B1</th><th>B2</th><th>B3</th>
-                    <th>B1</th><th>B2</th><th>B3</th>
-                </tr>
-            `;
-        } else {
-            const wText = document.getElementById('weekSelect').value.toUpperCase();
-            const lText = document.getElementById('lessonSelect').value.toUpperCase();
-            tableHeader.innerHTML = `
-                <tr>
-                    <th style="width: 70px;">Mã HS</th>
-                    <th>Họ và Tên</th>
-                    <th style="background: linear-gradient(to right, #4facfe, #00f2fe); color: #fff;">${wText}_${lText}</th>
-                </tr>
-            `;
-        }
+        tableHeader.innerHTML = `
+            <tr>
+                <th rowspan="2" style="width: 60px;">Mã HS</th>
+                <th rowspan="2" style="width: 180px;">Họ và Tên</th>
+                <th colspan="3" class="week-header">TUẦN 1</th>
+                <th colspan="3" class="week-header" style="background: linear-gradient(to right, #f6d365, #fda085);">TUẦN 2</th>
+                <th colspan="3" class="week-header" style="background: linear-gradient(to right, #43e97b, #38f9d7); color:#000;">TUẦN 3</th>
+                <th colspan="3" class="week-header" style="background: linear-gradient(to right, #a18cd1, #fbc2eb);">TUẦN 4</th>
+            </tr>
+            <tr>
+                <th>B1</th><th>B2</th><th>B3</th>
+                <th>B1</th><th>B2</th><th>B3</th>
+                <th>B1</th><th>B2</th><th>B3</th>
+                <th>B1</th><th>B2</th><th>B3</th>
+            </tr>
+        `;
     }
 
     function loadDataFromSheets() {
@@ -429,37 +535,35 @@
     function renderMatrixTable() {
         if (studentsDatabase.length === 0) return;
         matrixBody.innerHTML = '';
-        const currentWeek = document.getElementById('weekSelect').value;     
-        const currentLesson = document.getElementById('lessonSelect').value; 
-        const activeColKey = `${currentWeek}_${currentLesson}`;
-
         studentsDatabase.forEach(student => {
             const tr = document.createElement('tr');
             const badge = (val) => val ? `<span class="cell-check cell-${val}">${val}</span>` : "";
-
-            if (currentMode === 'laptop' || (currentMode === 'mobile' && mobileIsFullView)) {
-                tr.innerHTML = `
-                    <td>${student.id}</td>
-                    <td class="name-col">${student.name}</td>
-                    <td>${badge(student.t1_b1)}</td><td>${badge(student.t1_b2)}</td><td>${badge(student.t1_b3)}</td>
-                    <td>${badge(student.t2_b1)}</td><td>${badge(student.t2_b2)}</td><td>${badge(student.t2_b3)}</td>
-                    <td>${badge(student.t3_b1)}</td><td>${badge(student.t3_b2)}</td><td>${badge(student.t3_b3)}</td>
-                    <td>${badge(student.t4_b1)}</td><td>${badge(student.t4_b2)}</td><td>${badge(student.t4_b3)}</td>
-                `;
-            } else {
-                tr.innerHTML = `
-                    <td>${student.id}</td>
-                    <td class="name-col">${student.name}</td>
-                    <td>${badge(student[activeColKey])}</td>
-                `;
-            }
+            tr.innerHTML = `
+                <td>${student.id}</td>
+                <td class="name-col">${student.name}</td>
+                <td>${badge(student.t1_b1)}</td><td>${badge(student.t1_b2)}</td><td>${badge(student.t1_b3)}</td>
+                <td>${badge(student.t2_b1)}</td><td>${badge(student.t2_b2)}</td><td>${badge(student.t2_b3)}</td>
+                <td>${badge(student.t3_b1)}</td><td>${badge(student.t3_b2)}</td><td>${badge(student.t3_b3)}</td>
+                <td>${badge(student.t4_b1)}</td><td>${badge(student.t4_b2)}</td><td>${badge(student.t4_b3)}</td>
+            `;
             matrixBody.appendChild(tr);
         });
     }
 
+    function closeMobileSuggestions() {
+        suggestionsBox.style.display = 'none';
+        searchInput.value = '';
+        searchInput.blur(); // Tự động đóng bàn phím ảo
+    }
+
     searchInput.addEventListener('input', (e) => {
         const query = removeAccents(e.target.value.trim());
-        suggestionsBox.innerHTML = '';
+        
+        // Dọn dẹp các kết quả cũ nhưng giữ lại nút Đóng của Mobile Header
+        const container = document.getElementById('suggestionItemsContainer');
+        if(container) container.innerHTML = '';
+        else suggestionsBox.innerHTML = '';
+
         currentSuggestions = [];
 
         if (!query || studentsDatabase.length === 0) {
@@ -475,15 +579,35 @@
 
         if (currentSuggestions.length > 0) {
             suggestionsBox.style.display = 'block';
+            
+            // Nếu giao diện Mobile, chèn lại phần header nút đóng trước
+            if(currentMode === 'mobile' && !document.querySelector('.suggestion-header-mobile')) {
+                suggestionsBox.prepend(document.querySelector('.suggestion-header-mobile'));
+            }
+
             currentSuggestions.forEach((student, index) => {
                 const div = document.createElement('div');
                 div.className = 'suggestion-item' + (index === 0 ? ' active' : '');
                 div.innerHTML = `<span>🎓 ${student.name}</span> <span style="color:#b2bec3; font-size:12px;">${student.id}</span>`;
-                div.onclick = () => markAttendance(student.id);
-                suggestionsBox.appendChild(div);
+                div.onclick = () => {
+                    markAttendance(student.id);
+                    if(currentMode === 'mobile') closeMobileSuggestions();
+                };
+                
+                const targetBox = document.getElementById('suggestionItemsContainer') || suggestionsBox;
+                targetBox.appendChild(div);
             });
         } else {
-            suggestionsBox.style.display = 'none';
+            // Không tìm thấy nhưng nếu ở Mobile vẫn giữ khung để có nút đóng bấm thoát
+            if(currentMode === 'mobile') {
+                suggestionsBox.style.display = 'block';
+                const div = document.createElement('div');
+                div.style.padding = '20px'; div.style.textAlign = 'center'; div.style.color = '#b2bec3';
+                div.innerText = '❌ Không tìm thấy học sinh phù hợp';
+                (document.getElementById('suggestionItemsContainer') || suggestionsBox).appendChild(div);
+            } else {
+                suggestionsBox.style.display = 'none';
+            }
         }
     });
 
@@ -492,10 +616,45 @@
             e.preventDefault();
             if (currentSuggestions.length > 0) {
                 markAttendance(currentSuggestions[0].id);
+                if(currentMode === 'mobile') closeMobileSuggestions();
             }
         }
     });
 
+    function toggleQuickHistory(btn, studentId) {
+        const container = btn.parentElement;
+        let historyDiv = container.querySelector('.quick-history-preview');
+        if (historyDiv) {
+            historyDiv.remove();
+            btn.innerText = "🔍 Xem nhanh 12 buổi";
+            return;
+        }
+        const student = studentsDatabase.find(s => s.id === studentId);
+        if(!student) return;
+
+        btn.innerText = "🔼 Thu gọn lịch sử";
+        historyDiv = document.createElement('div');
+        historyDiv.className = 'quick-history-preview';
+
+        lessonSequence.forEach(lessonKey => {
+            const status = student[lessonKey] ? student[lessonKey].trim() : "";
+            const dot = document.createElement('div');
+            const label = lessonKey.replace('t', '').replace('b', '.'); 
+            if (status !== "") {
+                dot.className = 'history-dot dot-present';
+                dot.innerText = status;
+                dot.title = `Buổi ${label}: Đi học (${status})`;
+            } else {
+                dot.className = 'history-dot dot-absent';
+                dot.innerText = "×";
+                dot.title = `Buổi ${label}: Vắng`;
+            }
+            historyDiv.appendChild(dot);
+        });
+        container.appendChild(historyDiv);
+    }
+
+    // 1. CHỨC NĂNG ĐIỂM DANH (TÍCH HỢP HỆ THỐNG GỌI HOÀN TÁC TOAST)
     function markAttendance(studentId) {
         const currentClass = document.getElementById('classSelect').value;   
         const currentWeek = document.getElementById('weekSelect').value;     
@@ -512,13 +671,9 @@
             if (oldValue !== "") {
                 const weekText = document.getElementById('weekSelect').options[document.getElementById('weekSelect').selectedIndex].text;
                 const lessonText = document.getElementById('lessonSelect').options[document.getElementById('lessonSelect').selectedIndex].text;
-                
                 const confirmChange = confirm(`⚠️ CẢNH BÁO TRÙNG LẶP:\nHọc sinh "${student.name}" đã tích [Lớp ${oldValue}] tại [${weekText} - ${lessonText}].\n\nBạn có muốn ĐỔI sang [Lớp ${currentClass}] không?`);
-                
                 if (!confirmChange) {
-                    searchInput.value = '';
-                    suggestionsBox.style.display = 'none';
-                    searchInput.focus();
+                    searchInput.value = ''; suggestionsBox.style.display = 'none'; searchInput.focus();
                     return; 
                 }
             }
@@ -526,25 +681,44 @@
             let previousLessonName = "";
             let isPreviousAbsent = false;
             const currentIndex = lessonSequence.indexOf(targetColumn);
-            
             if (currentIndex > 0) {
                 previousLessonName = lessonSequence[currentIndex - 1]; 
                 const previousValue = student[previousLessonName] ? student[previousLessonName].trim() : "";
-                
-                if (previousValue === "") {
-                    isPreviousAbsent = true;
-                }
+                if (previousValue === "") isPreviousAbsent = true;
             }
 
+            // Sao chép lại thông tin để phòng trường hợp người dùng bấm Hoàn tác
+            lastActionData = {
+                subject: currentSubject,
+                month: currentMonth,
+                studentId: student.id,
+                studentName: student.name,
+                week: currentWeek.toUpperCase(),
+                lesson: currentLesson.toUpperCase(),
+                className: currentClass,
+                oldLocalValue: oldValue // Giữ lại giá trị cũ ở máy local
+            };
+
             student[targetColumn] = currentClass; 
+            renderMatrixTable();
             
             const div = document.createElement('div');
             div.className = 'student-item';
+            div.id = `log-${student.id}-${targetColumn}`;
             
             let alertHtml = "";
             if (isPreviousAbsent && previousLessonName !== "") {
-                const prevUpper = previousLessonName.toUpperCase();
-                alertHtml = `<span class="warning-badge">⚠️ Buổi trước (${prevUpper}) học sinh này NGHỈ HỌC</span>`;
+                const formattedPrevName = previousLessonName.toUpperCase().replace('_', ' - ');
+                alertHtml = `
+                    <div class="warning-card-advanced">
+                        <div class="warning-icon">🚨</div>
+                        <div class="warning-text-box">
+                            <span class="warning-title">Chú ý: Nghỉ học buổi trước</span>
+                            <span class="warning-desc">Học skin này vắng ca (<b>${formattedPrevName}</b>). Xem lịch sử buổi để theo dõi.</span>
+                            <button class="warning-history-btn" onclick="toggleQuickHistory(this, '${student.id}')">🔍 Xem nhanh 12 buổi</button>
+                        </div>
+                    </div>
+                `;
             }
 
             div.innerHTML = `
@@ -553,7 +727,11 @@
             `;
             attendanceList.prepend(div);
 
+            // BẬT TOAST THÔNG BÁO HOÀN TÁC TRÊN MÀN HÌNH (THỜI GIAN CHỜ 7 GIÂY)
+            showUndoToast(`Đã tích Lớp ${currentClass} cho ${student.name}`);
+
             const payload = {
+                action: "attendance", 
                 subject: currentSubject,
                 month: currentMonth, 
                 studentId: student.id,
@@ -565,27 +743,161 @@
 
             fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', 
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             })
-            .then(() => {
-                div.style.borderLeftColor = '#0984e3';
-                div.querySelector('span').innerHTML = `✅ ${student.name} <br><small style="color:#0984e3">Đã cập nhật Lớp ${currentClass}</small>`;
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    const checkDiv = document.getElementById(`log-${student.id}-${targetColumn}`);
+                    if(checkDiv) {
+                        checkDiv.style.borderLeftColor = '#0984e3';
+                        checkDiv.querySelector('span').innerHTML = `✅ ${student.name} <br><small style="color:#0984e3">Đã cập nhật Lớp ${currentClass}</small>`;
+                    }
+                }
             })
             .catch(err => {
-                div.style.borderLeftColor = '#d63031';
-                div.querySelector('span').innerHTML = `❌ Lỗi mạng: <br><small style="color:#d63031">${student.name}</small>`;
+                const checkDiv = document.getElementById(`log-${student.id}-${targetColumn}`);
+                if(checkDiv) {
+                    checkDiv.style.borderLeftColor = '#d63031';
+                    checkDiv.querySelector('span').innerHTML = `❌ Lỗi đồng bộ mạng: <br><small style="color:#d63031">${student.name}</small>`;
+                }
                 console.error(err);
             });
         }
 
         searchInput.value = '';
         suggestionsBox.style.display = 'none';
-        if(currentMode === 'mobile') searchInput.blur(); 
-        else searchInput.focus();
+        if(currentMode !== 'mobile') searchInput.focus();
+    }
 
-        renderMatrixTable();
+    // HÀM HIỂN THỊ HỘP TOAST HOÀN TÁC
+    function showUndoToast(msg) {
+        const toast = document.getElementById('undoToast');
+        document.getElementById('undoToastText').innerText = msg;
+        toast.classList.add('show');
+        
+        if (lastActionTimeout) clearTimeout(lastActionTimeout);
+        // Hộp thông báo ẩn đi sau 7 giây nếu không có tương tác bấm hoàn tác
+        lastActionTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 7000);
+    }
+
+    // KÍCH HOẠT HÀM HOÀN TÁC (TỪ NGƯỜI DÙNG BẤM NÚT TRÊN TOAST)
+    function triggerUndoAction() {
+        if (!lastActionData) return;
+        
+        const toast = document.getElementById('undoToast');
+        toast.classList.remove('show');
+        clearTimeout(lastActionTimeout);
+
+        const data = lastActionData;
+        const targetColumn = `${data.week.toLowerCase()}_${data.lesson.toLowerCase()}`;
+        
+        // Tìm học sinh để trả lại trạng thái cũ ngay lập tức trên giao diện local trước
+        const student = studentsDatabase.find(s => s.id === data.studentId);
+        if(student) {
+            student[targetColumn] = data.oldLocalValue; 
+            renderMatrixTable();
+        }
+
+        // Xóa dòng Nhật ký log vừa thêm
+        const targetLogItem = document.getElementById(`log-${data.studentId}-${targetColumn}`);
+        if(targetLogItem) targetLogItem.remove();
+
+        // Phát tín hiệu gửi lên API thông báo lệnh Xóa ô điểm danh
+        const payload = {
+            action: "undo_attendance",
+            subject: data.subject,
+            month: data.month,
+            studentId: data.studentId,
+            week: data.week,
+            lesson: data.lesson
+        };
+
+        // Hiện thông báo đang khôi phục dữ liệu
+        alert(`↩️ Đang tiến hành rút lại lệnh điểm danh của học sinh: ${data.studentName}...`);
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if(resData.status === 'success') {
+                alert(`✅ Đã khôi phục thành công trên Google Sheet chuỗi cũ: [${data.oldLocalValue || 'Trống'}]!`);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('❌ Có lỗi kết nối khi đồng bộ xóa trên Sheet. Hãy tải lại trang (F5) để kiểm tra!');
+        });
+
+        lastActionData = null; 
+    }
+
+    // 2. CHỨC NĂNG THÊM HỌC SINH MỚI
+    function addNewStudent() {
+        const nameInput = document.getElementById('newStudentName');
+        const phoneInput = document.getElementById('newStudentPhone');
+        const dateInput = document.getElementById('newStudentDate');
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const currentSubject = subjectSelect.value;
+        const currentMonth = monthSelect.value;
+        
+        let formattedDate = "";
+        if (dateInput.value) {
+            const [y, m, d] = dateInput.value.split('-');
+            formattedDate = `${d}/${m}/${y}`;
+        }
+
+        if (!name) {
+            alert('Vui lòng nhập họ và tên học sinh!');
+            nameInput.focus(); return;
+        }
+
+        const btn = document.getElementById('btnAddStudent');
+        btn.innerHTML = '⏳ Đang thêm...'; btn.disabled = true;
+
+        const payload = {
+            action: "add_student", subject: currentSubject, month: currentMonth,
+            studentName: name, phone: phone, entryDate: formattedDate
+        };
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const newStudent = {
+                    id: data.id, name: data.name,
+                    t1_b1: "", t1_b2: "", t1_b3: "",
+                    t2_b1: "", t2_b2: "", t2_b3: "",
+                    t3_b1: "", t3_b2: "", t3_b3: "",
+                    t4_b1: "", t4_b2: "", t4_b3: ""
+                };
+                studentsDatabase.push(newStudent);
+                renderMatrixTable();
+                alert(`✅ Đã thêm học sinh: ${data.name} thành công!`);
+                nameInput.value = ''; phoneInput.value = '';
+                setDefaultEntryDate();
+            } else {
+                alert('❌ Lỗi: ' + (data.message || 'Không thể xử lý.'));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('❌ Lỗi kết nối. Vui lòng kiểm tra lại.');
+        })
+        .finally(() => {
+            btn.innerHTML = 'Thêm vào danh sách'; btn.disabled = false;
+        });
     }
 
     autoDetectDevice();
