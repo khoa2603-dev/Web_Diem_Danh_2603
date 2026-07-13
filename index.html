@@ -156,7 +156,9 @@
         .warning-card-advanced .warning-desc { color: #495057; font-size: 12px; line-height: 1.4; }
         .warning-card-advanced .warning-history-btn { background: rgba(217, 72, 15, 0.1); color: #d9480f; border: none; border-radius: 4px; font-size: 10px; padding: 4px 8px; margin-top: 4px; cursor: pointer; width: fit-content; font-weight: 700; }
         .warning-card-advanced .warning-history-btn:hover { background: #d9480f; color: #fff; }
-        .quick-history-preview { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+        
+        .quick-history-preview { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+        .history-divider { font-size: 12px; font-weight: 800; color: #b2bec3; padding: 0 2px; user-select: none; }
         .history-dot { width: 18px; height: 18px; border-radius: 4px; font-size: 9px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; }
         .dot-present { background: #00b894; }
         .dot-absent { background: #e63946; }
@@ -186,17 +188,13 @@
         body.mode-mobile .live-clock { width: 100%; text-align: center; order: 3; margin-top: 5px; }
         body.mode-mobile .main-container { flex-direction: column; gap: 15px; max-width: 600px; }
         body.mode-mobile .left-panel { width: 100%; padding: 15px; }
-        
-        /* 🌟 ĐÃ SỬA: Bảng hiển thị ở chế độ mobile LUÔN HIỆN, không ẩn bảng điểm danh nữa */
         body.mode-mobile .right-panel { display: block; width: 100%; }
         body.mode-mobile select, body.mode-mobile input { height: 50px; font-size: 16px; }
         body.mode-mobile .mobile-btn-group { display: grid; }
         body.mode-mobile .btn-submit-origin { display: none; }
-        
-        /* Đưa độ rộng bảng co giãn tự động theo chế độ rút gọn */
         body.mode-mobile table { min-width: 100%; }
 
-        /* Khung gõ tìm kiếm 2 giai đoạn trên Mobile */
+        /* Bộ gõ tìm kiếm 2 giai đoạn trên Mobile */
         body.mode-mobile .suggestions { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
             max-height: 100vh; background: #f8fafc; z-index: 99999; 
@@ -334,7 +332,6 @@
 
             <div class="mobile-btn-group">
                 <button class="btn-submit" style="margin-top:0;" onclick="clearAllLogs()">🗑️ Xóa</button>
-                <!-- NÚT BẤM CHUYỂN ĐỔI CHẾ ĐỘ RÚT GỌN / FULL 12 BUỔI TRÊN MOBILE -->
                 <button class="btn-submit btn-view" id="mobileToggleViewBtn" style="margin-top:0;" onclick="toggleMobileFullView()">👀 Full 12 Buổi</button>
             </div>
         </div>
@@ -354,7 +351,7 @@
 <script>
     let studentsDatabase = [];
     let currentMode = 'laptop'; 
-    let mobileIsFullView = false; // Mặc định Mobile sẽ hiển thị bảng dạng RÚT GỌN 3 cột
+    let mobileIsFullView = false; 
     let currentSuggestions = [];
     
     let lastActionTimeout = null;
@@ -488,7 +485,7 @@
             currentMode = mode;
             if (mode === 'mobile') {
                 document.body.classList.add('mode-mobile'); document.getElementById('btnMobile').classList.add('active'); document.getElementById('btnLaptop').classList.remove('active'); 
-                mobileIsFullView = false; // Trả về dạng rút gọn khi mới chuyển sang mobile
+                mobileIsFullView = false; 
                 if(mobileToggleViewBtn) mobileToggleViewBtn.innerText = "👀 Full 12 Buổi";
             } else {
                 document.body.classList.remove('mode-mobile'); document.getElementById('btnLaptop').classList.add('active'); document.getElementById('btnMobile').classList.remove('active');
@@ -523,22 +520,20 @@
         mobileSearchClone.value = ''; executeStudentSearch(''); mobileSearchClone.focus();
     }
 
-    // 🌟 KHÔI PHỤC HOÀN TOÀN: Nút chuyển đổi trạng thái giữa RÚT GỌN (Mặc định) và FULL 12 BUỔI trên Mobile
     function toggleMobileFullView() {
         mobileIsFullView = !mobileIsFullView;
         if (mobileIsFullView) {
             mobileToggleViewBtn.innerText = "📉 Thu gọn bảng";
-            document.querySelector('#mainTable').style.minWidth = "900px"; // Kéo giãn chiều ngang khi xem full
+            document.querySelector('#mainTable').style.minWidth = "900px"; 
         } else {
             mobileToggleViewBtn.innerText = "👀 Full 12 Buổi";
-            document.querySelector('#mainTable').style.minWidth = "100%"; // Co về vừa màn hình khi rút gọn
+            document.querySelector('#mainTable').style.minWidth = "100%"; 
         }
         renderTableHeader(); 
         renderMatrixTable();
     }
 
     function renderTableHeader() {
-        // Nếu là Laptop hoặc ở Mobile bấm bật Full 12 buổi -> Vẽ cấu hình full 2 hàng tiêu đề tuần buổi
         if (currentMode === 'laptop' || (currentMode === 'mobile' && mobileIsFullView)) {
             tableHeader.innerHTML = `
                 <tr>
@@ -549,7 +544,6 @@
                 </tr>
             `;
         } else {
-            // 🌟 CHẾ ĐỘ RÚT GỌN TRÊN MOBILE: Chỉ vẽ 1 cột động dựa theo buổi đang tích điểm danh
             const wText = weekSelect.value.toUpperCase();
             const lText = lessonSelect.value.toUpperCase();
             tableHeader.innerHTML = `
@@ -590,13 +584,11 @@
         studentsDatabase.forEach(student => {
             const tr = document.createElement('tr'); const badge = (val) => val ? `<span class="cell-check cell-${val}">${val}</span>` : "";
             
-            // Nếu chạy trên Laptop hoặc chạy trên Mobile cấu hình MỞ FULL 12 BUỔI -> Kết xuất toàn bộ ma trận
             if (currentMode === 'laptop' || (currentMode === 'mobile' && mobileIsFullView)) {
                 tr.innerHTML = `
-                    <td>${student.id}</td><td class="name-col">${student.name}</td><td>${badge(student.t1_b1)}</td><td><td>${badge(student.t1_b2)}</td><td>${badge(student.t1_b3)}</td><td>${badge(student.t2_b1)}</td><td>${badge(student.t2_b2)}</td><td>${badge(student.t2_b3)}</td><td>${badge(student.t3_b1)}</td><td>${badge(student.t3_b2)}</td><td>${badge(student.t3_b3)}</td><td>${badge(student.t4_b1)}</td><td>${badge(student.t4_b2)}</td><td>${badge(student.t4_b3)}</td>
+                    <td>${student.id}</td><td class="name-col">${student.name}</td><td>${badge(student.t1_b1)}</td><td>${badge(student.t1_b2)}</td><td>${badge(student.t1_b3)}</td><td>${badge(student.t2_b1)}</td><td>${badge(student.t2_b2)}</td><td>${badge(student.t2_b3)}</td><td>${badge(student.t3_b1)}</td><td>${badge(student.t3_b2)}</td><td>${badge(student.t3_b3)}</td><td>${badge(student.t4_b1)}</td><td>${badge(student.t4_b2)}</td><td>${badge(student.t4_b3)}</td>
                 `;
             } else {
-                // 🌟 CHẾ ĐỘ RÚT GỌN TRÊN MOBILE: Chỉ kết xuất duy nhất dữ liệu của ô cột hiện tại được chọn
                 tr.innerHTML = `
                     <td>${student.id}</td>
                     <td class="name-col">${student.name}</td>
@@ -685,40 +677,67 @@
 
         btn.innerText = "🔼 Thu gọn lịch sử"; historyDiv = document.createElement('div'); historyDiv.className = 'quick-history-preview';
 
-        lessonSequence.forEach(lessonKey => {
-            const status = student[lessonKey] ? student[lessonKey].trim() : ""; const dot = document.createElement('div'); const label = lessonKey.replace('t', '').replace('b', '.'); 
-            if (status !== "") { dot.className = 'history-dot dot-present'; dot.innerText = status; dot.title = `Buổi ${label}: Đi học (${status})`; } 
-            else { dot.className = 'history-dot dot-absent'; dot.innerText = "×"; dot.title = `Buổi ${label}: Vắng`; }
+        lessonSequence.forEach((lessonKey, index) => {
+            if (index > 0 && index % 3 === 0) {
+                const pipe = document.createElement('span');
+                pipe.className = 'history-divider';
+                pipe.innerText = '|';
+                historyDiv.appendChild(pipe);
+            }
+
+            const status = student[lessonKey] ? student[lessonKey].trim() : ""; 
+            const dot = document.createElement('div'); 
+            const label = lessonKey.replace('t', '').replace('b', '.'); 
+            
+            if (status !== "") { 
+                dot.className = 'history-dot dot-present'; dot.innerText = status; dot.title = `Buổi ${label}: Đi học (${status})`; 
+            } else { 
+                dot.className = 'history-dot dot-absent'; dot.innerText = "×"; dot.title = `Buổi ${label}: Vắng`; 
+            }
             historyDiv.appendChild(dot);
         });
         container.appendChild(historyDiv);
     }
 
+    // 🌟 SIÊU CẬP NHẬT: Thêm cơ chế chặn và xác thực hộp thoại an toàn trước khi chạy lệnh xóa ngầm
     function executeInlineUndo(logDivId, type, encodedMetadata) {
-        const data = JSON.parse(decodeURIComponent(encodedMetadata)); const targetLogItem = document.getElementById(logDivId);
+        const data = JSON.parse(decodeURIComponent(encodedMetadata));
+        
+        // Tạo câu hỏi tùy biến theo đúng hành động trợ giảng đang định xóa
+        let confirmationMessage = "";
+        if (type === "attendance") {
+            confirmationMessage = `⚠️ BẠN CÓ CHẮC CHẮN MUỐN HỦY LỆNH ĐIỂM DANH?\nHọc sinh: "${data.studentName}"\nCa học: Lớp ${data.className} (${data.week}_${data.lesson})`;
+        } else if (type === "add_student") {
+            confirmationMessage = `⚠️ BẠN CÓ CHẮC CHẮN MUỐN XÓA HỌC SINH MỚI?\nHọc sinh: "${data.studentName}" (Mã số: ${data.studentId})\nHành động này sẽ xóa toàn bộ hàng học sinh trên Google Sheet!`;
+        }
+
+        // Hiện hộp thoại xác thực an toàn của trình duyệt
+        const userConfirmed = confirm(confirmationMessage);
+        if (!userConfirmed) return; // Nếu chọn CANCEL -> Thoát hàm, không làm gì cả
+
+        // Nếu bấm OK -> Bắt đầu bóc tách cục bộ và đồng bộ ngầm lên Google Sheet
+        const targetLogItem = document.getElementById(logDivId);
 
         if (type === "attendance") {
-            const targetColumn = `${data.week.toLowerCase()}_${data.lesson.toLowerCase()}`; const student = studentsDatabase.find(s => s.id === data.studentId);
+            const targetColumn = `${data.week.toLowerCase()}_${data.lesson.toLowerCase()}`; 
+            const student = studentsDatabase.find(s => s.id === data.studentId);
             if(student) { student[targetColumn] = data.oldLocalValue; renderMatrixTable(); }
-            if(targetLogItem) targetLogItem.remove(); syncCurrentLogsToCache();
+            if(targetLogItem) targetLogItem.remove(); 
+            syncCurrentLogsToCache();
 
             const payload = { action: "undo_attendance", subject: data.subject, month: data.month, studentId: data.studentId, week: data.week, lesson: data.lesson };
-            alert(`↩️ Đang rút lại lệnh điểm danh của học sinh: ${data.studentName}...`);
             fetch(GOOGLE_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
-            .then(res => res.json())
-            .then(resData => { if(resData.status === 'success') { alert(`✅ Đã khôi phục thành công điểm danh cũ: [${data.oldLocalValue || 'Trống'}]!`); } })
-            .catch(err => { console.error(err); alert('❌ Lỗi kết nối khi gọi lệnh xóa điểm danh.'); });
+            .catch(err => console.error('Lỗi đồng bộ xóa ngầm:', err));
         } 
         else if (type === "add_student") {
-            studentsDatabase = studentsDatabase.filter(s => s.id !== data.studentId); renderMatrixTable();
-            if(targetLogItem) targetLogItem.remove(); syncCurrentLogsToCache();
+            studentsDatabase = studentsDatabase.filter(s => s.id !== data.studentId); 
+            renderMatrixTable();
+            if(targetLogItem) targetLogItem.remove(); 
+            syncCurrentLogsToCache();
 
             const payload = { action: "undo_add_student", subject: data.subject, month: data.month, studentId: data.studentId };
-            alert(`↩️ Đang hủy và xóa học sinh mới vừa thêm: ${data.studentName}...`);
             fetch(GOOGLE_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
-            .then(res => res.json())
-            .then(resData => { if(resData.status === 'success') { alert(`✅ Đã loại bỏ học sinh "${data.studentName}" ra khỏi Google Sheet!`); } })
-            .catch(err => { console.error(err); alert('❌ Lỗi kết nối khi xóa học sinh.'); });
+            .catch(err => console.error('Lỗi đồng bộ hủy học sinh:', err));
         }
     }
 
@@ -751,26 +770,25 @@
                 alertHtml = `<div class="warning-card-advanced"><div class="warning-icon">🚨</div><div class="warning-text-box"><span class="warning-title">Chú ý: Nghỉ học buổi trước</span><span class="warning-desc">Học sinh này vắng ca (<b>${formattedPrevName}</b>). Xem lịch sử buổi để theo dõi.</span><button class="warning-history-btn" onclick="toggleQuickHistory(this, '${student.id}')">🔍 Xem nhanh 12 buổi</button></div></div>`;
             }
 
-            div.innerHTML = `<div class="log-item-header"><span>⏳ Đang ghi nhận... <br><small style="color:#636e72">${student.name}</small></span><button class="log-undo-inline-btn" title="Hủy / Hoàn tác lệnh" onclick="executeInlineUndo('${logDivId}', 'attendance', '${encodedMeta}')">✖</button></div>${alertHtml}`;
+            div.style.borderLeftColor = '#0984e3'; 
+            div.innerHTML = `<div class="log-item-header"><span>✅ ${student.name} <br><small style="color:#0984e3">Đã cập nhật Lớp ${currentClass}</small></span><button class="log-undo-inline-btn" title="Hủy / Hoàn tác lệnh" onclick="executeInlineUndo('${logDivId}', 'attendance', '${encodedMeta}')">✖</button></div>${alertHtml}`;
             attendanceList.prepend(div); syncCurrentLogsToCache();
 
             const payload = { action: "attendance", subject: currentSubject, month: currentMonth, studentId: student.id, studentName: student.name, week: currentWeek.toUpperCase(), lesson: currentLesson.toUpperCase(), className: currentClass };
 
             fetch(GOOGLE_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
             .then(res => res.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    const checkDiv = document.getElementById(logDivId);
-                    if(checkDiv) { checkDiv.style.borderLeftColor = '#0984e3'; checkDiv.querySelector('.log-item-header span').innerHTML = `✅ ${student.name} <br><small style="color:#0984e3">Đã cập nhật Lớp ${currentClass}</small>`; syncCurrentLogsToCache(); }
-                }
-            })
+            .then(data => { if(data.status !== 'success') { throw new Error(); } })
             .catch(err => {
                 const checkDiv = document.getElementById(logDivId);
-                if(checkDiv) { checkDiv.style.borderLeftColor = '#d63031'; checkDiv.querySelector('.log-item-header span').innerHTML = `❌ Lỗi mạng đồng bộ: <br><small style="color:#d63031">${student.name}</small>`; syncCurrentLogsToCache(); }
+                if(checkDiv) {
+                    checkDiv.style.borderLeftColor = '#d63031';
+                    checkDiv.querySelector('.log-item-header span').innerHTML = `❌ Lỗi mạng đồng bộ: <br><small style="color:#d63031">${student.name}</small>`;
+                    syncCurrentLogsToCache();
+                }
                 console.error(err);
             });
         }
-        
         if(currentMode !== 'mobile') { searchInput.focus(); }
     }
 
